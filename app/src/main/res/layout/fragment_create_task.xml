@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.CreateTaskFragment">
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Создайте задачу!"
+        android:textColor="@color/pinky"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tv_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="15dp"
+        android:hint="Что вам необходимо сделать?"
+        app:layout_constraintBottom_toTopOf="@+id/tv_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/vt_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/pinky"
+            app:boxCornerRadiusTopEnd="20dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tv_description"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="15dp"
+        android:hint="Добавьте описание задачи"
+        app:layout_constraintBottom_toTopOf="@+id/btn_start_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/vt_descrption"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:textColor="@color/pinky"
+            app:boxCornerRadiusTopEnd="20dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_start_time"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/white"
+        android:gravity="center"
+        android:shadowColor="@color/pinky_dark"
+        android:text="Указать сроки начала"
+        android:textAllCaps="false"
+        android:textColor="@color/pinky"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_end_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_description"
+        app:strokeColor="@color/pinky"
+        app:strokeWidth="1dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_end_time"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/white"
+        android:gravity="center"
+        android:shadowColor="@color/pinky_dark"
+        android:text="Указать сроки окончания"
+        android:textAllCaps="false"
+        android:textColor="@color/pinky"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_start_time"
+        app:strokeColor="@color/pinky"
+        app:strokeWidth="1dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_task_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/white"
+        android:shadowColor="@color/pinky_dark"
+        android:text="Создать задачу!"
+        android:textColor="@color/pinky"
+        app:cornerRadius="10dp"
+        app:icon="@drawable/plus"
+        app:iconGravity="textStart"
+        app:iconTint="@color/pinky"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/pinky"
+        app:strokeWidth="1dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

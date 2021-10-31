@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground">
+
+    <TextView
+        android:id="@+id/task_time"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:text="14:00\n-\n15:00"
+        android:textColor="@color/pinky_dark"
+        android:textSize="15sp"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/brief_task_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/brief_task_view"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
+        android:layout_marginVertical="15dp"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/task_time"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/pinky"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/all_tasks_tv_name"
+                android:layout_width="215dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:layout_marginStart="5dp"
+                android:gravity="center"
+                android:text="Название задания"
+                android:textColor="@color/pinky"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/delete_task_btn"
+                android:layout_width="66dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="4dp"
+                android:layout_marginStart="6dp"
+                android:backgroundTint="@color/white"
+                app:icon="@drawable/trash"
+                app:iconSize="36dp"
+                app:iconTint="@color/pinky_dark"
+                app:layout_constraintStart_toEndOf="@+id/all_tasks_tv_name" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

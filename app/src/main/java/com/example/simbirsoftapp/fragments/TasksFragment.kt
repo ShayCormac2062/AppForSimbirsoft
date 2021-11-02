@@ -15,6 +15,7 @@ import com.example.simbirsoftapp.R
 import com.example.simbirsoftapp.adapter.TaskAdapter
 import com.example.simbirsoftapp.databinding.FragmentTasksBinding
 import com.example.simbirsoftapp.entities.Task
+import com.example.simbirsoftapp.services.RealmService
 import com.example.simbirsoftapp.services.TimeService
 import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
@@ -25,6 +26,7 @@ class TasksFragment(realm: Realm) : Fragment() {
     private lateinit var binding: FragmentTasksBinding
     private var mRealm = realm
     private var timeService = TimeService()
+    private var realmService = RealmService()
     private var eventDay: EventDay? = null
 
     override fun onCreateView(
@@ -40,7 +42,7 @@ class TasksFragment(realm: Realm) : Fragment() {
         eventDay = null
         binding.calendarView.setOnDayClickListener { day ->
             eventDay = day
-            val tasks = getSortedRealm(day)
+            val tasks = realmService.getSortedRealm(day, mRealm)
             init(TaskAdapter(tasks))
             if (tasks.isEmpty()) {
                 binding.noTasksNotification.visibility = View.VISIBLE
@@ -61,60 +63,29 @@ class TasksFragment(realm: Realm) : Fragment() {
                     .show()
             }
         }
-
     }
-
 
     private fun init(adapter: TaskAdapter) {
         binding.apply {
             taskList.layoutManager = LinearLayoutManager(requireActivity()).apply {
                 orientation = RecyclerView.VERTICAL
             }
-            taskList.apply {
-                this.adapter = adapter
-                adapter.apply {
-                    completeClickListener = {
-                        AlertDialog.Builder(context).apply {
-                            setMessage("Вы точно хотите удалить эту задачу?")
-                            setPositiveButton("Да") { _, _ ->
-                                mRealm.beginTransaction()
-                                try {
-                                    it.deleteFromRealm()
-                                    //Не баг, а фича)
-                                    Snackbar.make(binding.root, "Чтобы изменения вступили в силу, нажмите на текущую дату снова", 1500)
-                                        .show()
-                                } catch (e: IllegalStateException) {
-                                    Snackbar.make(binding.root, "Вы уже удалили эту задачу!", 1500)
-                                        .show()
-                                }
-                                mRealm.commitTransaction()
-                            }
-                            setNegativeButton("Нет") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                        }.show()
+            taskList.adapter = adapter
+            adapter.apply {
+                completeClickListener = {
+                    view?.let { it1 ->
+                        context?.let { it2 -> realmService.deleteTask(it2, it, mRealm, it1)
+                        }
                     }
-                    clickListener = {
-                        parentFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.container, TaskInfoFragment(it))
-                            .addToBackStack(null)
-                            .commit()
-                    }
+                }
+                clickListener = {
+                    parentFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, TaskInfoFragment(it))
+                        .addToBackStack(null)
+                        .commit()
                 }
             }
         }
-    }
-
-    private fun getSortedRealm(day: EventDay): List<Task> {
-        return mRealm
-            .where(Task::class.java)
-            .findAll().filter { task: Task ->
-                //Понимаю, что это плохой тон, но без этого, почему-то, ничего не выходит...
-                task.date_start!! >= timeService.getDayTime(day)
-                        && task.date_finish!! <= timeService.getDayTime(day) + 86400000
-            }.sortedWith(kotlin.Comparator<Task> { o1, o2 ->
-                return@Comparator o1.date_start!!.compareTo(o2.date_finish!!)
-            })
     }
 }

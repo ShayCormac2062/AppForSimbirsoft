@@ -12,6 +12,7 @@ import com.applandeo.materialcalendarview.EventDay
 import com.example.simbirsoftapp.R
 import com.example.simbirsoftapp.databinding.FragmentCreateTaskBinding
 import com.example.simbirsoftapp.entities.Task
+import com.example.simbirsoftapp.services.RealmService
 import com.example.simbirsoftapp.services.TimeService
 import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
@@ -23,6 +24,7 @@ class CreateTaskFragment(realm: Realm, day: EventDay?) : Fragment() {
     private var mRealm = realm
     private lateinit var binding: FragmentCreateTaskBinding
     private var eventDay: EventDay? = day
+    private var realmService = RealmService()
     private var timeService = TimeService()
 
     override fun onCreateView(
@@ -36,28 +38,20 @@ class CreateTaskFragment(realm: Realm, day: EventDay?) : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var task: Task?
         with(binding) {
             createTaskBtn.setOnClickListener {
                 if ((btnStartTime.text != "Указать сроки начала") && (btnEndTime.text != "Указать сроки окончания")) {
-                    mRealm.beginTransaction()
-                    task = mRealm.createObject(Task::class.java, (0..10000).random())
-                    task?.let { task ->
-                        with(task) {
-                            name = binding.vtName.text.toString()
-                            description = binding.vtDescrption.text.toString()
-                            date_start = timeService.convertToLong(btnStartTime.text.toString())
-                            date_finish = timeService.convertToLong(btnEndTime.text.toString())
-                        }
-                    }
-                    Snackbar.make(it, "Была добавлена задача \"${task?.name}\"", 1000).show()
-                    mRealm.commitTransaction()
+                    realmService.addTask(mRealm, binding.vtName.text.toString(),
+                        binding.vtDescrption.text.toString(),
+                        btnStartTime.text.toString(),
+                        btnEndTime.text.toString(),
+                        view)
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.container, TasksFragment(mRealm))
                         .commit()
                 } else {
                     Snackbar
-                        .make(it, "Вам необходимо создать хотя бы дату начала и дату окончания задачи", 2000)
+                        .make(it, "Вам необходимо указать дату начала и дату окончания задачи", 2000)
                         .show()
                 }
             }

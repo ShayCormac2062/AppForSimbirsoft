@@ -13,8 +13,8 @@ class TaskAdapter(tasks1: List<Task>) : RecyclerView.Adapter<TaskAdapter.TaskVie
 
     private val tasks = tasks1
     private var timeService = TimeService()
-    var completeClickListener: ((taskModel: Task) -> Unit)? = null
     var clickListener: ((taskModel: Task) -> Unit)? = null
+    var completeClickListener: ((taskModel: Task) -> Unit)? = null
 
     inner class TaskViewHolder(
         private val binding: BriefTaskViewBinding

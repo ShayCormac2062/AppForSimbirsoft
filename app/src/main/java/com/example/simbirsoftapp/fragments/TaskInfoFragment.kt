@@ -1,7 +1,5 @@
 package com.example.simbirsoftapp.fragments
 
-import android.annotation.SuppressLint
-import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment

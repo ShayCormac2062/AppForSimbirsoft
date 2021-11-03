@@ -2,6 +2,7 @@ package com.example.simbirsoftapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.applandeo.materialcalendarview.EventDay
 import com.example.simbirsoftapp.databinding.ActivityMainBinding
 import com.example.simbirsoftapp.fragments.TasksFragment
 import io.realm.Realm
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private fun begin() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.container, TasksFragment(mRealm))
+            .replace(R.id.container, TasksFragment(null as EventDay?, mRealm))
             .addToBackStack(null)
             .commit()
     }

@@ -6,6 +6,7 @@ import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
 import com.applandeo.materialcalendarview.EventDay
+import com.example.simbirsoftapp.adapter.TaskAdapter
 import com.example.simbirsoftapp.entities.Task
 import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
@@ -15,16 +16,19 @@ class RealmService {
 
     private var timeService = TimeService()
 
-    fun getSortedRealm(day: EventDay, mRealm: Realm): List<Task> {
-        return mRealm
-            .where(Task::class.java)
-            .findAll().filter { task: Task ->
-                //Понимаю, что это плохой тон, но без этого, почему-то, ничего не выходит...
-                task.date_start!! >= timeService.getDayTime(day)
-                        && task.date_finish!! <= timeService.getDayTime(day) + 86400000
-            }.sortedWith(kotlin.Comparator<Task> { o1, o2 ->
-                return@Comparator o1.date_start!!.compareTo(o2.date_finish!!)
-            })
+    fun getSortedRealm(day: EventDay?, mRealm: Realm): List<Task> {
+        day?.let {
+            return mRealm
+                .where(Task::class.java)
+                .findAll().filter { task: Task ->
+                    //Понимаю, что это плохой тон, но без этого, почему-то, ничего не выходит...
+                    task.date_start!! >= timeService.getDayTime(day)
+                            && task.date_finish!! <= timeService.getDayTime(day) + 86400000
+                }.sortedWith(kotlin.Comparator<Task> { o1, o2 ->
+                    return@Comparator o1.date_start!!.compareTo(o2.date_start!!)
+                })
+        }
+        return emptyList()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -39,11 +43,11 @@ class RealmService {
                 date_finish = timeService.convertToLong(finishDate)
             }
         }
-        Snackbar.make(view, "Была добавлена задача \"${task?.name}\"", 1900).show()
+        Snackbar.make(view, "Была добавлена задача \"${task?.name}\". Нажмите на дату вновь, чтобы обновить список", 2000).show()
         mRealm.commitTransaction()
     }
 
-    fun deleteTask(context: Context, task: Task, mRealm: Realm, view: View) {
+    fun deleteTask(context: Context, task: Task, mRealm: Realm, view: View, adapter: TaskAdapter) {
         AlertDialog.Builder(context).apply {
             setMessage("Вы точно хотите удалить эту задачу?")
             setPositiveButton("Да") { _, _ ->

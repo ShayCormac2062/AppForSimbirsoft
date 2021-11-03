@@ -1,6 +1,5 @@
 package com.example.simbirsoftapp.fragments
 
-import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -19,37 +18,31 @@ import com.example.simbirsoftapp.services.RealmService
 import com.example.simbirsoftapp.services.TimeService
 import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
-import java.lang.IllegalStateException
+import kotlin.IllegalStateException
 
-class TasksFragment(realm: Realm) : Fragment() {
+class TasksFragment(day: EventDay?, realm: Realm) : Fragment() {
 
     private lateinit var binding: FragmentTasksBinding
     private var mRealm = realm
     private var timeService = TimeService()
     private var realmService = RealmService()
-    private var eventDay: EventDay? = null
+    private var eventDay: EventDay? = day
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTasksBinding.inflate(layoutInflater)
+        changeDay(eventDay)
         return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        eventDay = null
         binding.calendarView.setOnDayClickListener { day ->
             eventDay = day
-            val tasks = realmService.getSortedRealm(day, mRealm)
-            init(TaskAdapter(tasks))
-            if (tasks.isEmpty()) {
-                binding.noTasksNotification.visibility = View.VISIBLE
-            } else {
-                binding.noTasksNotification.visibility = View.GONE
-            }
-            binding.currentDate.text = timeService.getMonthFromTime(day)
+            changeDay(day)
         }
         binding.createTaskBtn.setOnClickListener {
             if (eventDay != null) {
@@ -58,6 +51,7 @@ class TasksFragment(realm: Realm) : Fragment() {
                     .replace(R.id.container, CreateTaskFragment(this.mRealm, eventDay))
                     .addToBackStack(null)
                     .commit()
+                binding.taskList.adapter?.notifyDataSetChanged()
             } else {
                 Snackbar.make(it, "Выберите сначала день, в который хотите записать задачу", 1500)
                     .show()
@@ -74,18 +68,38 @@ class TasksFragment(realm: Realm) : Fragment() {
             adapter.apply {
                 completeClickListener = {
                     view?.let { it1 ->
-                        context?.let { it2 -> realmService.deleteTask(it2, it, mRealm, it1)
+                        context?.let { it2 ->
+                            realmService.deleteTask(it2, it, mRealm, it1,
+                                taskList.adapter as TaskAdapter
+                            )
                         }
                     }
                 }
                 clickListener = {
-                    parentFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.container, TaskInfoFragment(it))
-                        .addToBackStack(null)
-                        .commit()
+                    if (mRealm.where(Task::class.java).findAll().contains(it)){
+                        parentFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.container, TaskInfoFragment(it))
+                            .addToBackStack(null)
+                            .commit()
+                    } else {
+                        Snackbar.make(binding.root, "Вы уже удалили эту задачу!", 1500)
+                            .show()
+                    }
                 }
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun changeDay(day: EventDay?) {
+        val tasks = realmService.getSortedRealm(day, mRealm)
+        init(TaskAdapter(tasks))
+        if (tasks.isEmpty()) {
+            binding.noTasksNotification.visibility = View.VISIBLE
+        } else {
+            binding.noTasksNotification.visibility = View.GONE
+        }
+        binding.currentDate.text = day?.let { timeService.getMonthFromTime(it) }
     }
 }

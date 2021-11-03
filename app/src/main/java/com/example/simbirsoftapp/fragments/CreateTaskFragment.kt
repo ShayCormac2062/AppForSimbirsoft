@@ -47,11 +47,11 @@ class CreateTaskFragment(realm: Realm, day: EventDay?) : Fragment() {
                         btnEndTime.text.toString(),
                         view)
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.container, TasksFragment(mRealm))
+                        .replace(R.id.container, TasksFragment(eventDay, mRealm))
                         .commit()
                 } else {
                     Snackbar
-                        .make(it, "Вам необходимо указать дату начала и дату окончания задачи", 2000)
+                        .make(it, "Вам необходимо создать хотя бы дату начала и дату окончания задачи", 2000)
                         .show()
                 }
             }
